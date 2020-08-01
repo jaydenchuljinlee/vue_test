@@ -1,6 +1,6 @@
 # demo
 
-> A Vue.js project
+## A Vue.js project - vue.js 시작을 위한 간단한 사이드 예제
 
 ## Build Setup
 
