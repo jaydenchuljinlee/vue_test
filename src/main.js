@@ -82,3 +82,55 @@ vm.$el === document.getElementById('example') // => true
 vm.$watch('a', function (newVal, oldVal) {
   // 'vm.a' 가 변경되면 호출되는 메서드
 }) 
+
+var ex1_vm = new Vue({
+  el: '#example',
+  data: {
+    message: '안녕하세요'
+  },
+  computed: {
+    // 계산된 getter. 우리가 작성한 함수가 ex1_vm.reverseMessage의 getter 함수로 사용된다.
+    reverseMessage: function() {
+      // 'this'는 ex1_vm을 가리킨다
+      return this.message.split('').reverse().join('')
+    },
+    methods: {
+      reverseMessage: function() {
+        return this.massage.split('').reverse().join('')
+      }
+    }
+  }
+
+})
+
+var ex2_vm = new Vue({
+  el: '#demo',
+  data: {
+    firstName: 'Foo',
+    lastName: 'Bar',
+    fullName: 'Foo bar'
+  },
+  watch: {
+    firstName: function(val) {
+      this.fullName = val + ' ' + this.lastName
+    },
+    lastName: function(val) {
+      this.fullName = this.firstName + ' ' + val
+    }
+  },
+  computed: {
+    fullName:  {
+      // getter
+      get: function() {
+        return this.firstName + ' ' + this.lastName
+      },
+      // setter
+      set: function(newValue) {
+        var names = newValue.split(' ')
+        this.firstName = names[0]
+        this.lastName = names[names.length - 1]
+      }
+    }
+  }
+
+})

@@ -5,8 +5,12 @@
     <title>demo</title>
   </head>
   <body>
-    <div id="app">
+    <div id="app" v-bind:class="dynamicsClass">
       {{ message }}
+      <span v-once>다시는 변경하지 않습니다: {{ message }}</span>
+      <button v-bind:disabled="isButtonDisabled">Button</button>
+      <a v-bind:href="url">https://gibhub.com/jaydenchuljinlee</a>
+      <a v-on:click="doSomething"></a>
     </div>
     <div id="app-2">
       <span v-bind:title="message">
@@ -40,6 +44,11 @@
         ></todo-item>
       </ol>
     </div>
+    <div id="example">
+      <p> 원본 메시지 : "{{ message }}"</p>
+      <p> 역순으로 표시한 메시지 : "{{ reverseMessage }}"</p>
+    </div>
+    <div id="demo">{{ fullName }}</div>
     <script src="/dist/build.js"></script>
   </body>
 </html>
