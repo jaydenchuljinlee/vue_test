@@ -3,46 +3,98 @@
   <head>
     <meta charset="utf-8">
     <title>demo</title>
+    <script src="https://unpkg.com/vue/dist/vue.js"></script>
+    <script src="https://cdn.rawgit.com/chrisvfritz/5f0a639590d6e648933416f90ba7ae4e/raw/974aa47f8f9c5361c5233bd56be37db8ed765a09/currency-validator.js"></script>
   </head>
   <body>
-    <div id="example-1">
-      <button v-on:click="counter += 1"> Add 1</button>
-      <p>위 버튼을 클릭한 횟수는 {{ counter }} 번 입니다.</p>
+    <div id="app">
+      <currency-input 
+        label="Price" 
+        v-model="price"
+      ></currency-input>
+      <currency-input 
+        label="Shipping" 
+        v-model="shipping"
+      ></currency-input>
+      <currency-input 
+        label="Handling" 
+        v-model="handling"
+      ></currency-input>
+      <currency-input 
+        label="Discount" 
+        v-model="discount"
+      ></currency-input>
+      
+      <p>Total: ${{ total }}</p>
     </div>
-    <div id="example-3">
-      <button v-on:click="warn('Form cannot be submitted yet.',$event)">
-        submit
-      </button>
-      <a v-on:click.stop="doThis"></a>
-
-      <form v-on:submit.prevent="onSubmit"></form>
-
-      <a v-on:click.stop.prevent="doThat"></a>
-
-      <form v-on:submit.prevent></form>
-
-      <div v-on:click.capture="doThis"></div>
-
-      <div v-on:click.self="doThat"></div>
-
-      <a v-on:click.once="doThis"></a>
-
-      <div v-on:scroll.passive="onScroll"></div>
-
-      <input v-on:keyup.enter="submit">
-
-      <input v-on:keyup.page-down="onPageDown">
-
-      <input @keyup.alt.67="clear">
-
-      <div @click.ctrl="doSomthing"> Do something</div>
-
-      <button @click.ctrl="onClick">A</button>
-
-      <button @click.ctrl.exact="onCtrlClick">A</button>
-
-      <button @click.exact="onClick">A</button>
-    </div>
-    <script src="/dist/build.js"></script>
   </body>
+  <script type="text/javascript">
+    Vue.component('currency-input', {
+  template: '\
+    <div>\
+      <label v-if="label">{{ label }}</label>\
+      $\
+      <input\
+        ref="input"\
+        v-bind:value="value"\
+        v-on:input="updateValue($event.target.value)"\
+        v-on:focus="selectAll"\
+        v-on:blur="formatValue"\
+      >\
+    </div>\
+  ',
+  props: {
+    value: {
+      type: Number,
+      default: 0
+    },
+    label: {
+      type: String,
+      default: ''
+    }
+  },
+  mounted: function () {
+    this.formatValue()
+  },
+  methods: {
+    updateValue: function (value) {
+      var result = currencyValidator.parse(value, this.value)
+      if (result.warning) {
+        this.$refs.input.value = result.value
+      }
+      this.$emit('input', result.value)
+    },
+    formatValue: function () {
+      this.$refs.input.value = currencyValidator.format(this.value)
+    },
+    selectAll: function (event) {
+      // Workaround for Safari bug
+      // http://stackoverflow.com/questions/1269722/selecting-text-on-focus-using-jquery-not-working-in-safari-and-chrome
+      setTimeout(function () {
+      	event.target.select()
+      }, 0)
+    }
+  }
+})
+
+new Vue({
+  el: '#app',
+  data: {
+    price: 0,
+    shipping: 0,
+    handling: 0,
+    discount: 0
+  },
+  computed: {
+    total: function () {
+      return ((
+        this.price * 100 + 
+        this.shipping * 100 + 
+        this.handling * 100 - 
+        this.discount * 100
+      ) / 100).toFixed(2)
+    }
+  }
+})
+  </script>
 </html>
